@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Unity.VisualScripting;
+using UnityEngine.Rendering;
 
 public class Node
 {
@@ -13,6 +14,76 @@ public class Node
 
 public class PriorityQueue<TElement, TPriority> where TPriority : IComparable<TPriority> 
 {
+
+/*    public int Count => heap.Count;
+    
+    private List<(TElement Element, TPriority Priority)> heap;
+    private readonly IComparer<TPriority> comparer;
+
+    public PriorityQueue()
+    {
+        heap = new <(TElement, TPriority)> ();
+        
+    }
+    public void Enqueue(TElement element, TPriority priority)
+    {
+        heap.Add((element, priority));
+
+        HeapifyUp(heap.Count);
+    }
+    private void HeapifyUp(int index)
+    {
+        while(index>0)
+        {
+            int parentIndex = (index-1)/2;
+            if (comparer.Compare(heap[index].Priority, heap[parentIndex].Priority) >= 0 )
+            {
+                break;
+            }
+            Swap(index,parentIndex);
+            index = parentIndex;
+        }
+    }
+
+    private void Swap(int index,int parentindex)
+    {
+        int teamp = index;
+    }
+    public TElement Dequeue()
+    {
+        if(heap == null) return
+        TElement result = heap[0].Element;
+        int lastindex = heap.Count-1;
+        heap[0] = heap[lastindex];
+        heap.RemoveAt(lastindex);
+        if(heap.Count >0)
+        {
+            HeapifyDwon(0);
+        }
+        return result
+    }
+    private void HeapifyDown(int index)
+    {
+        int lastIndex = heap.Count-1;
+
+        while(true)
+        {
+            int leftchild = 2 * index + 1;
+            int rightchild = 2 * index + 2;
+            int current = index;
+
+            if(leftchild <= lastIndex && comparer.Compare(heap[rightchild].Priority, heap[current].Priority)<0)
+                {
+                current = rightchild;
+            }
+            if()
+        }
+    }
+    public TElement Peek();
+    public void Clear();*/
+
+
+
     public int Count => _List.Count;
     private List<(TElement Element, TPriority Priority)> _List = new List<(TElement Element, TPriority Priority)>();
     public void Enqueue(TElement element, TPriority priority)
