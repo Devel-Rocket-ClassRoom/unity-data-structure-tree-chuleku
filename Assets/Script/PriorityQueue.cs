@@ -13,7 +13,7 @@ public class Node
 
 public class PriorityQueue<TElement, TPriority> where TPriority : IComparable<TPriority> 
 {
-    public int Count => _List.Count;
+    public int Count { get; }
     private List<(TElement Element, TPriority Priority)> _List = new List<(TElement Element, TPriority Priority)>();
     public void Enqueue(TElement element, TPriority priority)
     {
