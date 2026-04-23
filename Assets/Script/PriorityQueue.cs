@@ -11,9 +11,9 @@ public class Node
     public Node(string name) {  Name = name; }
 }
 
-public class PriorityQueue<TElement, TPriority> where TPriority : IComparable<TPriority>
+public class PriorityQueue<TElement, TPriority> where TPriority : IComparable<TPriority> 
 {
-    public int Count { get; }
+    public int Count => _List.Count;
     private List<(TElement Element, TPriority Priority)> _List = new List<(TElement Element, TPriority Priority)>();
     public void Enqueue(TElement element, TPriority priority)
     {
@@ -22,7 +22,7 @@ public class PriorityQueue<TElement, TPriority> where TPriority : IComparable<TP
         while (currentcount > 0)
         {
             int p = (currentcount-1)/2;
-            if (_List[currentcount].Priority.CompareTo(_List[p].Priority)>0)
+            if (_List[currentcount].Priority.CompareTo(_List[p].Priority)<0)
             {
                 var temp = _List[currentcount];
                 _List[currentcount] = _List[p];
@@ -56,10 +56,8 @@ public class PriorityQueue<TElement, TPriority> where TPriority : IComparable<TP
             {
                 next = right;
             }
-
             if (next == current)
             {
-                Debug.Log("값이 같음");
                 break;
             }
 
@@ -77,20 +75,5 @@ public class PriorityQueue<TElement, TPriority> where TPriority : IComparable<TP
     public void Clear()
     {
         _List.Clear();
-    }
-    public void Check()
-    {
-        var pq = new PriorityQueue<Node, int>();
-        pq.Enqueue(new Node("50"), 50);
-        pq.Enqueue(new Node("60"), 60);
-        pq.Enqueue(new Node("70"), 70);
-        pq.Enqueue(new Node("40"), 40);
-        pq.Enqueue(new Node("20"), 20);
-        pq.Enqueue(new Node("10"), 10);
-        while (pq.Count > 0)
-        {
-            var current = pq.Dequeue();
-            Debug.Log(current.Name);
-        }
     }
 }
