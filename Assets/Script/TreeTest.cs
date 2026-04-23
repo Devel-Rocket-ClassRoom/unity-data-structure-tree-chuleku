@@ -4,16 +4,18 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using Unity.Android.Gradle;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-
+using Random = UnityEngine.Random;
 public class TreeTest : MonoBehaviour
 {
     public GameObject prefab;
     public GameObject lineRenderer;
     public Transform treecanvas;
-    private float delay = 2f;
+    public float horizontalSpacing = 2.0f;
+    public float verticalSpacing = 2.0f;
     private BinarySearchTree<int, int> bst = new BinarySearchTree<int, int>();
     private readonly Dictionary<object, Vector3> nodePosition = new();
     public void RandomPow()
@@ -74,20 +76,31 @@ public class TreeTest : MonoBehaviour
     public void AssignPositioinsLevelOrder<TKey,TValue>(TreeNode<TKey,TValue> node)
     {
         var levels = new List<List<TreeNode<TKey,TValue>>> ();
-        var queue = new Queue<(TreeNode<TKey,TValue>node,int depth)>();
-        queue.Enqueue((node, 0));
+        Vector3 pos = new Vector3(Screen.width / 2, Screen.height - 100f, 0f);
+        var queue = new Queue<(TreeNode<TKey,TValue>node,int depth,float xoff, Vector3? parentPos)>();
+        queue.Enqueue((node, 0,pos.x,null));
+        
         while (queue.Count > 0)
         {
-            var (root,depth) = queue.Dequeue ();
-            int count = levels.Count;
-            while(levels.Count <= depth)
+            var (root,depth,x, parentPos) = queue.Dequeue ();
+            float y = pos.y -(depth * 100f);
+            Vector3 currentPos = new Vector3(x, y, 0f);
+            GameObject obj = Instantiate(prefab, currentPos, quaternion.identity,treecanvas.transform);
+            obj.GetComponentInChildren<TextMeshProUGUI>().text = root.Value.ToString();
+            nodePosition[root] = currentPos;
+            if (parentPos != null)
             {
-                levels[count++].Add(node);
+                LineRender(parentPos.Value, currentPos);
+            }
+            while (levels.Count <= depth)
+            {
+                levels.Add(new List<TreeNode<TKey, TValue>>());
             }
             levels[depth].Add(root);
 
-            if(root.Left != null)queue.Enqueue((root.Left, depth+1));
-            if(root.Right != null)queue.Enqueue((root.Right, depth+1));
+            float spread = 200f / Mathf.Pow(2, depth);
+            if (root.Left != null)queue.Enqueue((root.Left, depth+1,x,currentPos));
+            if(root.Right != null)queue.Enqueue((root.Right, depth+1,x+spread,currentPos));
         }
         for(int depth = 0; depth<levels.Count; depth++)
         {
@@ -99,9 +112,41 @@ public class TreeTest : MonoBehaviour
             }
         }
     }
+    private void AssignPositionsInOrder<TKey, TValue>(TreeNode<TKey, TValue> node, int depth, ref int xIndex,Vector3 pos)
+    {
+        if (node == null) return;
+        AssignPositionsInOrder(node.Left, depth + 1, ref xIndex,pos);
+        float xPos = pos.x+(xIndex * horizontalSpacing);
+        float yPos = 1080f-200f-(depth * verticalSpacing);
+        Vector3 currentPos = new Vector3(xPos, yPos, 0);
+
+        GameObject obj = Instantiate(prefab, currentPos, Quaternion.identity, treecanvas);
+        obj.GetComponentInChildren<TextMeshProUGUI>().text = node.Value.ToString();
+        nodePosition[node] = currentPos;
+        xIndex++;
+
+        AssignPositionsInOrder(node.Right, depth + 1, ref xIndex,pos);
+    }
     public void OnClickLevelOrder()
     {
-        if (bst == null) return;
+        OnClear();
+        for (int i = 0; i < 10; i++)
+        {
+            int rnum = Random.Range(1, 100);
+            bst.Add(rnum, rnum);
+        }
         AssignPositioinsLevelOrder(bst.root);
+    }
+    public void OnClickInOrder()
+    {
+        OnClear();
+        for (int i = 0; i < 10; i++)
+        {
+            int rnum = Random.Range(1, 100);
+            bst.Add(rnum, rnum);
+        }
+        int x = 0;
+        Vector3 firstpos = new Vector3(Screen.width / 2, Screen.height - 100f, 0f);
+        AssignPositionsInOrder(bst.root, 0,ref x,firstpos);
     }
 }

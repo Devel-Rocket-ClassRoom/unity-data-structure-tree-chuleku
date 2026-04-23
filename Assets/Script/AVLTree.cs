@@ -21,6 +21,8 @@ public class AVLTree<TKey,TValue> : BinarySearchTree<TKey,TValue> where TKey : I
     protected override TreeNode<TKey, TValue> Remove(TreeNode<TKey, TValue> node, TKey key)
     {
         node = base.Remove(node, key);
+        if (node == null) return node;
+
         return Balance(node);
     }
     protected int BalanceFactor(TreeNode<TKey, TValue> node)
